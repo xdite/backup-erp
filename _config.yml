@@ -73,3 +73,8 @@ disqus_short_name: octopress
 
 # Google Analytics
 google_analytics_tracking_id: UA-10876422-2
+google_analytics_tracking_id:
+
+# Readability
+readability_basic_buttons: true
+readability_all_buttons: false
