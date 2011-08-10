@@ -29,13 +29,20 @@ code_dir: downloads/code
 category_dir: blog/categories
 category_title_prefix: "Category: "
 markdown: rdiscount
-pygments: false
+pygments: false # default python pygments have been replaced by pygments.rb
 
 paginate: 10 # Posts per page on the blog index
 recent_posts: 5 # Posts in the sidebar Recent Posts section
 
-# list each of the sidebar modules you want to include, in the order you want, here, adding your own in asides/custom/... if you'd like
-asides: [asides/recent_posts.html, asides/twitter.html, asides/delicious.html, asides/pinboard.html]
+# list each of the sidebar modules you want to include, in the order you want them to appear.
+# To add custom asides, create files in /source/_includes/custom/asides/ and add them to the list like 'custom/asides/custom_aside_name.html'
+default_asides: [asides/recent_posts.html, custom/asides/about.html, asides/twitter.html, asides/delicious.html, asides/pinboard.html]
+
+# Each layout uses the default asides, but they can have their own asides instead. Simply uncomment the lines below
+# and add an array with the asides you want to use.
+blog_index_asides: [asides/twitter.html, asides/delicious.html, asides/pinboard.html]
+# post_asides:
+# page_asides:
 
 # ----------------------- #
 #   3rd Party Settings    #
@@ -66,3 +73,7 @@ disqus_short_name: octopress
 
 # Google Analytics
 google_analytics_tracking_id: UA-10876422-2
+google_analytics_tracking_id:
+
+# Readability
+readability: basic
