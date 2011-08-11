@@ -9,14 +9,14 @@ custom_index = false
 # Be sure your public key is listed in your server's ~/.ssh/authorized_keys file
 ssh_user       = "mathisweb@octopress.org"
 document_root  = "~/octopress.org/"
-deploy_default = "rsync"
+deploy_default = "push"
 
 # This will be configured for you when you run config_deploy
 deploy_branch  = "gh-pages"
 
 ## -- Misc Configs, you probably have no reason to changes these -- ##
 
-public_dir   = "public"    # compiled site directory
+public_dir   = "public/octopress"    # compiled site directory
 source_dir   = "source"    # source file directory
 deploy_dir   = "_deploy"   # deploy directory (for Github pages deployment)
 stash_dir    = "_stash"    # directory to stash posts for speedy generation
