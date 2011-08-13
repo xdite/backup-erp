@@ -1,6 +1,10 @@
 require "rubygems"
 require "bundler/setup"
 
+# If you customize your site's index page setting custom_index to true
+# will preserve your changes when running `rake update_source`
+custom_index = false
+
 ## -- Rsync Deploy config -- ##
 # Be sure your public key is listed in your server's ~/.ssh/authorized_keys file
 ssh_user       = "mathisweb@octopress.org"
@@ -20,6 +24,7 @@ posts_dir    = "_posts"    # directory for blog files
 themes_dir   = ".themes"   # directory for blog files
 new_post_ext = "markdown"  # default new post file extension when using the new_post task
 new_page_ext = "markdown"  # default new page file extension when using the new_page task
+server_port  = "4000"      # port for preview server eg. localhost:4000
 
 
 desc "Initial setup for Octopress: copies the default theme into the path of Jekyll's generator. Rake install defaults to rake install[classic] to install a different theme run rake install[some_theme_name]"
@@ -52,7 +57,7 @@ end
 
 desc "preview the site in a web browser"
 task :preview do
-  system "trap 'kill $jekyllPid $compassPid' Exit; jekyll --auto --server & jekyllPid=$!; compass watch & compassPid=$!; wait"
+  system "trap 'kill $jekyllPid $compassPid $rackPid' Exit; jekyll --auto & jekyllPid=$!; compass watch & compassPid=$!; rackup --port #{server_port} & rackPid=$!; wait"
 end
 
 # usage rake new_post[my-new-post] or rake new_post['my new post'] or rake new_post (defaults to "new-post")
@@ -151,6 +156,7 @@ task :update_source, :theme do |t, args|
   system "mkdir -p #{source_dir}; cp -R #{themes_dir}/"+theme+"/source/. #{source_dir}"
   system "cp -Rn #{source_dir}.old/. #{source_dir}"
   system "cp -Rf #{source_dir}.old/_includes/custom/. #{source_dir}/_includes/custom/"
+  system "cp -Rf #{source_dir}.old/index.html #{source_dir}" if custom_index
   puts "## Updated #{source_dir} ##"
 end
 
@@ -252,6 +258,6 @@ end
 
 desc "list tasks"
 task :list do
-  puts "Tasks: #{(Rake::Task.tasks - [Rake::Task[:list]]).to_sentence}"
+  puts "Tasks: #{(Rake::Task.tasks - [Rake::Task[:list]]).join(', ')}"
   puts "(type rake -T for more detail)\n\n"
 end
