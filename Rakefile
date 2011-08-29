@@ -191,7 +191,17 @@ end
 ##############
 
 desc "Default deploy task"
-task :deploy => "#{deploy_default}" do
+multitask :deploy => [:copydot, "#{deploy_default}"] do
+end
+
+desc "copy dot files for deployment"
+task :copydot do
+   exclusions = [".", "..", ".DS_Store"]
+   Dir["#{source_dir}/.*"].each do |file|
+     if !File.directory?(file) && !exclusions.include?(file)
+       cp(file, "#{public_dir}");
+    end
+  end
 end
 
 desc "Deploy website via rsync"
