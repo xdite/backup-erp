@@ -7,7 +7,7 @@
       {% include post/readability.html %}
     {% endif %}
     {% unless page.meta == false %}
-      <p class="meta">{% include post/date.html %}</p>
+      <p class="meta">{% include post/date.html %}{{ time }}</p>
     {% endunless %}
   </header>
 {% endunless %}
@@ -16,7 +16,7 @@
   {% capture excerpted %}{{ content | has_excerpt }}{% endcapture %}
   {% if excerpted == 'true' %}
     <footer>
-      <a rel="full-article" href="{{ root_url }}{{ post.url }}">Read on &rarr;</a>
+      <a rel="full-article" href="{{ root_url }}{{ post.url }}">{{ site.excerpt_link }}</a>
     </footer>
   {% endif %}
 {% else %}
