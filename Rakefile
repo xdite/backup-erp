@@ -12,6 +12,7 @@ config          = Octopress.config
 deploy_config   = config['deploy_config']
 
 public_dir      = config['destination']     # compiled site directory
+style_dir       = config['stylesheets']     # stylesheet directory
 source_dir      = config['source']          # source file directory
 blog_index_dir  = config['blog_index_dir']  # directory for your blog's index page (if you put your index in source/blog/index.html, set this to 'source/blog')
 new_post_ext    = config['new_post_ext']    # default new post file extension when using the new_post task
@@ -49,6 +50,7 @@ desc "Generate jekyll site"
 task :generate do
   raise "!! You haven't set anything up yet. First run `rake install` to set up an Octopress theme." unless File.directory?(source_dir)
   puts "## Generating Site with Jekyll"
+  style_dir.sub!(/#{public_dir}/, source_dir)
   system "jekyll"
 end
 
@@ -197,7 +199,7 @@ end
 
 desc "Setup deploy configuration"
 task :setup_deploy, :platform do |t, args|
-  valid_platforms = ['rsync', 'github', 'heroku', 'amazon']
+  valid_platforms = Octopress.get_deployment_platforms
   platform = args.platform
   platform = Octopress.ask('Please select your deployment platform.', valid_platforms) if platform.nil? || !valid_platforms.include?(platform)
 
@@ -209,12 +211,11 @@ desc "Deploy task"
 task :deploy do
   raise "!! Please setup your deployment environment first with `rake setup_deploy`" if deploy_config.nil?
   Rake::Task[:copydot].execute
-  Octopress.send("deploy_#{deploy_config.sub!(/\.yml/, '')}")
+  Octopress.send("deploy_#{deploy_config}")
 end
 
 desc "Generate website and deploy"
-task :gen_deploy do
-  [:integrate, :generate, :deploy].each { |t| Rake::Task[t].execute }
+task :gen_deploy => [:integrate, :generate, :deploy] do
 end
 
 

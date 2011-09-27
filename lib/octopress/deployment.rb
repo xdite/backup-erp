@@ -1,9 +1,20 @@
 module Deployment
   module ClassMethods
 
+    def method_missing(m, *args, &block)  
+      raise "!! No deploy method for platform `#{m.to_s.sub(/setup_/, '')}` found. Aborting."
+    end
+
+    def get_deployment_platforms
+      platforms = []
+      self.methods(true).grep(/deploy_/).each { |m| platforms << m.to_s.sub(/deploy_/, '') }
+      platforms.sort!
+    end
+
+
     def deploy_rsync
       puts "## Deploying website via Rsync"
-      ok_failed system("rsync -avz --delete #{self.config['public_dir']}/ #{self.config['ssh_user']}:#{self.config['document_root']}")
+      ok_failed system("rsync -avze 'ssh -p #{self.config['ssh_port']}' --delete #{self.config['public_dir']}/ #{self.config['ssh_user']}:#{self.config['document_root']}")
     end
 
 
