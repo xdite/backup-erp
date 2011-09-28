@@ -11,3 +11,4 @@ source/_stash
 source/stylesheets/screen.css
 vendor
 rsync.yml
+node_modules
