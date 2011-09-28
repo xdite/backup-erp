@@ -210,7 +210,7 @@ end
 desc "Deploy task"
 task :deploy do
   raise "!! Please setup your deployment environment first with `rake setup_deploy`" if deploy_config.nil?
-  Rake::Task[:copydot].execute
+  Rake::Task[:copydot].invoke(source_dir, public_dir)
   Octopress.send("deploy_#{deploy_config}")
 end
 
@@ -220,15 +220,14 @@ end
 
 
 desc "copy dot files for deployment"
-task :copydot do
+task :copydot, :source, :dest do |t, args|
   exclusions = [".", "..", ".DS_Store"]
-  Dir["#{source_dir}/**/.*"].each do |file|
+  Dir["#{args.source}/**/.*"].each do |file|
     if !File.directory?(file) && !exclusions.include?(File.basename(file))
-      cp(file, file.gsub(/#{source_dir}/, "#{public_dir}"));
+      cp(file, file.gsub(/#{args.source}/, "#{args.dest}"));
     end
   end
 end
-
 
 desc "Update configurations to support publishing to root or sub directory"
 task :set_root_dir, :dir do |t, args|
