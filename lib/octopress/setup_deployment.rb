@@ -8,7 +8,7 @@ module SetupDeployment
   module ClassMethods
     include Rake::DSL
 
-    def method_missing(m, *args, &block)  
+    def method_missing(m, *args, &block)
       raise "!! No setup method for deplyoment platform `#{m.to_s.sub(/setup_/, '')}` found. Aborting."
     end
 
@@ -35,21 +35,35 @@ deploy_config: #{deploy_config}
     def setup_rsync
       deploy_config = __method__.to_s.sub('setup_', '')
 
-      ssh_user = ask("SSH user", "user@domain.com")
+      ssh_user = ask("SSH login", "user@domain.com")
       ssh_port = ask("SSH port", "22")
       document_root = ask("Document root", "~/website.com/")
+      delete = ask("When syncing, do you want to delete files in #{document_root} which don't exist locally?", ["y", "n", "help"])
+      delete_help <<-DELETE
+If you delete on sync:
+1. The server will create update and delete files to match your local version.
+2. When you remove a page, it will be removed from the server.
+3. Any files in your #{document_root} that aren't in your local copy will be removed, including files you may have uploaded via SFTP.
+
+If you do not delete:
+1. You can store files in #{document_root} which aren't found in your local version
+2. Files you have removed from your local site must be removed manually from the server
+
+Do you want to delete on sync?
+      DELETE
+      delete = ask(delete_help, ['y','n']) if delete == 'help'
 
       File.open("#{deploy_config}.yml", 'w') do |f|
         f.write <<-CONFIG
 ssh_user: #{ssh_user}
 ssh_port: #{ssh_port}
 document_root: #{document_root}
+delete: #{delete === 'y' ? 'true' : 'false'}
         CONFIG
       end
       set_deployment_config(deploy_config)
-      puts "## Now you can deploy to #{ssh_user}:#{document_root} with `rake deploy`. Be sure your public key is listed in your server's ~/.ssh/authorized_keys file."
+      puts "\n## Now you can deploy to #{ssh_user}:#{document_root} with `rake deploy`. You can avoid entering your password, if your public key is listed in your server's ~/.ssh/authorized_keys file."
     end
-
 
     def setup_github
       deploy_config = __method__.to_s.sub('setup_', '')
@@ -64,10 +78,11 @@ document_root: #{document_root}
 
       # Set up fresh Github deployment
       else
-        service = "\nGithub's Pages service (http://pages.github.com) has two deployment options:\n  1. User/organization pages e.g. http://username.github.com/\n  2. Project pages e.g. http://username.github.com/project/\n\nWhich do you want to use?"
-        @branch = (ask(service, ["user", "project"]) == 'project') ? 'gh-pages' : 'master'
-        url_hint = (@branch == 'gh-pages') ? 'project repo URL e.g. git@github.com:user/project.git' : 'user pages repo URL, e.g. git@github.com:user/user.github.com'
-        @repo_url = get_stdin("Enter your #{url_hint}: ")
+        @repo_url = get_stdin("To use Github's Pages service (http://pages.github.com) please enter the read/write url for your repository: ")
+        @user = @repo_url.match(/:([^\/]+)/)[1]
+        @branch = (@repo_url.match(/\/\w+.github.com/).nil?) ? 'gh-pages' : 'master'
+        @project = (@branch == 'gh-pages') ? @repo_url.match(/\/([^\.]+)/)[1] : ''
+
         rm_rf deploy_dir if File.directory?(deploy_dir)
         system "git clone #{@repo_url} #{deploy_dir}"
         puts "## Creating a clean #{@branch} branch for Github pages deployment"
@@ -127,7 +142,7 @@ CONFIG
 
       File.open("#{deploy_config}.yml", 'w') { |f| f.write "service: #{service}" }
       set_deployment_config(deploy_config)
-      puts "## Now you can deploy to #{service} with `rake deploy`"
+      puts "\n## Now you can deploy to #{service} with `rake deploy`"
     end
 
   end
