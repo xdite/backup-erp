@@ -50,7 +50,7 @@ desc "Generate jekyll site"
 task :generate do
   raise "!! You haven't set anything up yet. First run `rake install` to set up an Octopress theme." unless File.directory?(source_dir)
   puts "## Generating Site with Jekyll"
-  system "compass compile --css-dir #{style_dir.sub(/#{public_dir}/, source_dir)}"
+  system "compass compile --css-dir #{source_dir}/stylesheets"
   system "jekyll"
 end
 
@@ -209,8 +209,9 @@ end
 
 desc "Deploy task"
 task :deploy do
+<<<<<<< HEAD
   raise "!! Please setup your deployment environment first with `rake setup_deploy`" if deploy_config.nil?
-  Rake::Task[:copydot].execute
+  Rake::Task[:copydot].invoke(source_dir, public_dir)
   Octopress.send("deploy_#{deploy_config}")
 end
 
@@ -220,11 +221,11 @@ end
 
 
 desc "copy dot files for deployment"
-task :copydot do
+task :copydot, :source, :dest do |t, args|
   exclusions = [".", "..", ".DS_Store"]
-  Dir["#{source_dir}/**/.*"].each do |file|
+  Dir["#{args.source}/**/.*"].each do |file|
     if !File.directory?(file) && !exclusions.include?(File.basename(file))
-      cp(file, file.gsub(/#{source_dir}/, "#{public_dir}"));
+      cp(file, file.gsub(/#{args.source}/, "#{args.dest}"));
     end
   end
 end
