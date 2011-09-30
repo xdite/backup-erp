@@ -7,7 +7,7 @@ require 'octopress/deployment'
 module Octopress
   extend SetupDeployment::ClassMethods
   extend Deployment::ClassMethods
-  
+
   def self.config
     @config ||= lambda do
       begin
@@ -15,8 +15,8 @@ module Octopress
         config = YAML::load(File.open(config_file))
 
         # Include optional configuration file for deployment settings
-        if config['deploy_config']
-          deployconfig_file = File.expand_path "../#{config['deploy_config']}.yml", File.dirname(__FILE__)
+        if config['deploy_method']
+          deployconfig_file = File.expand_path "../deploy.yml", File.dirname(__FILE__)
           config.merge! YAML::load(File.open(deployconfig_file)) if File.exists?(deployconfig_file)
         end
         config
@@ -31,7 +31,7 @@ module Octopress
     print message
     STDIN.gets.chomp
   end
-   
+
 
   def self.ask(message, args)
     if args.kind_of?(Array)

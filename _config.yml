@@ -15,13 +15,6 @@ subscribe_email:
 email: brandon@imathis.com
 
 # ----------------------- #
-#       Deployment        #
-# ----------------------- #
-
-deploy_config:
-
-
-# ----------------------- #
 #    Jekyll & Plugins     #
 # ----------------------- #
 

@@ -9,7 +9,7 @@ config          = Octopress.config
 #   get configs from _config.yml    #
 # --------------------------------- #
 #
-deploy_config   = config['deploy_config']
+deploy_method   = config['deploy_method']
 
 public_dir      = config['destination']     # compiled site directory
 style_dir       = config['stylesheets']     # stylesheet directory
@@ -197,8 +197,8 @@ end
 # Deploying  #
 ##############
 
-desc "Setup deploy configuration"
-task :setup_deploy, :platform do |t, args|
+desc "Set up deployment configuration"
+task :config_deploy, :platform do |t, args|
   valid_platforms = Octopress.get_deployment_platforms
   platform = args.platform
   platform = Octopress.ask('Please select your deployment platform.', valid_platforms) if platform.nil? || !valid_platforms.include?(platform)
@@ -209,9 +209,9 @@ end
 
 desc "Deploy task"
 task :deploy do
-  raise "!! Please setup your deployment environment first with `rake setup_deploy`" if deploy_config.nil?
+  raise "!! Please setup your deployment environment first with `rake setup_deploy`" if deploy_method.nil?
   Rake::Task[:copydot].invoke(source_dir, public_dir)
-  Octopress.send("deploy_#{deploy_config}")
+  Octopress.send("deploy_#{deploy_method}")
 end
 
 desc "Generate website and deploy"
