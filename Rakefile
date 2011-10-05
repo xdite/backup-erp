@@ -2,6 +2,11 @@ require "rubygems"
 require "bundler/setup"
 require "stringex"
 
+$LOAD_PATH << File.expand_path('../lib', __FILE__)
+require 'octopress'
+
+config = Octopress.configuration
+
 ## -- Rsync Deploy config -- ##
 # Be sure your public key is listed in your server's ~/.ssh/authorized_keys file
 ssh_user       = "user@domain.com"

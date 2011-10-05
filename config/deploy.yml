@@ -1,0 +1,3 @@
+# If publishing to a subdirectory, as in http://site.com/project:
+#   root: /project
+root: /

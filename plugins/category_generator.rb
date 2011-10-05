@@ -14,10 +14,9 @@
 # - category_links:      Outputs the list of categories as comma-separated <a> links.
 # - date_to_html_string: Outputs the post.date as formatted html, with hooks for CSS styling.
 #
-# Available _config.yml settings :
-# - category_dir:          The subfolder to build category pages in (default is 'categories').
-# - category_title_prefix: The string used before the category name in the page title (default is
-#                          'Category: ').
+# Available _plugin.yml settings :
+# - category_dir:          The subfolder to build category pages in.
+# - category_title_prefix: The string used before the category name in the page title.
 
 module Jekyll
 
@@ -39,17 +38,20 @@ module Jekyll
       self.read_yaml(File.join(base, '_layouts'), 'category_index.html')
       self.data['category']    = category
       # Set the title for this page.
-      title_prefix             = site.config['category_title_prefix'] || 'Category: '
+      title_prefix             = site.config['category_title_prefix']
       self.data['title']       = "#{title_prefix}#{category}"
       # Set the meta-description for this page.
-      meta_description_prefix  = site.config['category_meta_description_prefix'] || 'Category: '
+      meta_description_prefix  = site.config['category_meta_description_prefix']
       self.data['description'] = "#{meta_description_prefix}#{category}"
     end
 
   end
 
 
-  # The Site class is a built-in Jekyll class with access to global site config information.
+  # The Site class is a built-in Jekyll class with access to global site config
+  # information. Here we are re-opening the class to add some behavior for
+  # categories.
+  #
   class Site
 
     # Creates an instance of CategoryIndex for each category page, renders it, and
@@ -68,7 +70,7 @@ module Jekyll
     # Loops through the list of category pages and processes each one.
     def write_category_indexes
       if self.layouts.key? 'category_index'
-        dir = self.config['category_dir'] || 'categories'
+        dir = self.config['category_dir']
         self.categories.keys.each do |category|
           self.write_category_index(File.join(dir, category.gsub(/_|\P{Word}/, '-').gsub(/-{2,}/, '-').downcase), category)
         end

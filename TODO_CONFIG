@@ -1,0 +1,3 @@
+Use Octopress.configuration in with Jekyll::Site. We'll not be calling the `jekyll` command line anymore.
+Update the :watch task in the Rakefile. We need it run `rake generate` instead of `jekyll`.
+Update the config rewriting code in the Rakefile.

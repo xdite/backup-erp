@@ -1,12 +1,12 @@
 # Title: Include Array Tag for Jekyll
 # Author: Jason Woodward http://www.woodwardjd.com
-# Description: Import files on your filesystem as specified in a configuration variable in _config.yml.  Mostly cribbed from Jekyll's include tag.
-# Syntax: {% include_array variable_name_from_config.yml %}
+# Description: Import files on your filesystem as specified in a configuration variable in /config/theme.yml.  Mostly cribbed from Jekyll's include tag.
+# Syntax: {% include_array variable_name_from_theme.yml %}
 #
 # Example 1:
 # {% include_array asides  %}
 #
-# _config.yml snippet:
+# theme.yml snippet:
 # asides: [asides/twitter.html, asides/custom/my_picture.html]
 #
 module Jekyll
@@ -17,7 +17,7 @@ module Jekyll
       if markup =~ Syntax
         @array_name = $1
       else
-        raise SyntaxError.new("Error in tag 'include_array' - Valid syntax: include_array [array from _config.yml]")
+        raise SyntaxError.new("Error in tag 'include_array' - Valid syntax: include_array [array from theme.yml]")
       end
 
       super

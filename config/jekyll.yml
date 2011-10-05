@@ -1,0 +1,7 @@
+source: source
+destination: public
+plugins: plugins
+
+markdown: rdiscount
+pygments: false # default python pygments have been replaced by pygments.rb
+permalink: /blog/:year/:month/:day/:title/
